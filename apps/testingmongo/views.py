@@ -8,6 +8,7 @@ from django.http import *
 from django.contrib.auth import login,  logout
 import datetime
 import json
+
 # Create your views here.
 
 
@@ -16,7 +17,7 @@ def home(request):
 
 
 def graphs(request):
-	tweets_data_path = 'anusha.txt'
+	tweets_data_path = 'tweepy/anusha.txt'
 	tweets_data = []
 	tweets_file = open(tweets_data_path, "r")
 	for line in tweets_file:
