@@ -9,6 +9,7 @@ from django.contrib.auth import login,  logout
 import datetime
 import json
 from difflib import SequenceMatcher
+from django.db.models import Q
 # Create your views here.
 
 
@@ -36,28 +37,33 @@ def graphs(request):
 			for x in location_list_array:
 				location_list.append(x)
 			if len(found_locations) == 0:
-				if item in location_list_array:
+				for item in location_list_array:
 					print 'found location is none'
 					tweet_object = Event_tweet_data()
-					tweet_object.event_location = item
+					string = ''.join(e for e in item if e.isalnum())
+					string = ''.join([i for i in string if not i.isdigit()])
+					tweet_object.event_location = string.strip()
 					tweet_object.event_count = 0
 					tweet_object.save()
-			for x in found_locations:
-				flag = True
+			else:
 				for y in location_list_array:
-					print 'X'+ x
-					print 'Y'+ y
-					similarity = SequenceMatcher(a=x,b=y).ratio() * 100
-					if similarity > 99 and flag:
-						match_location = Event_tweet_data.objects.get(event_location = y)
-						match_location.event_count += 1
-						match_location.save() 
-						flag= False
-						break
-				if flag:
-					print 'hello'
-					tweet_object = Event_tweet_data()
-					tweet_object.event_location = tweets_data[total]['user']['location']
-					tweet_object.event_count = 0
-					tweet_object.save()
+					flag = True
+					for x in found_locations:
+						print 'X'+ x
+						print 'Y'+ y
+						similarity = SequenceMatcher(a=x.strip(),b=y.strip()).ratio() * 100
+						print similarity
+						if similarity > 99 and flag:
+							match_location = Event_tweet_data.objects.get(event_location=y.strip())
+							match_location.event_count += 1
+							match_location.save() 
+							flag= False
+							break
+					if flag:
+						tweet_object = Event_tweet_data()
+						string = ''.join(e for e in y if e.isalnum())
+						string = ''.join([i for i in string if not i.isdigit()])
+						tweet_object.event_location = string.strip()
+						tweet_object.event_count = 1
+						tweet_object.save()
 	return HttpResponse(location_list)
