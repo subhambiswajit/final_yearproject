@@ -47,14 +47,17 @@ def graphs(request):
 					tweet_object.save()
 			else:
 				for y in location_list_array:
+					found_locations = Event_tweet_data.objects.values_list("event_location")
 					flag = True
 					for x in found_locations:
 						print 'X'+ x
 						print 'Y'+ y
-						similarity = SequenceMatcher(a=x.strip(),b=y.strip()).ratio() * 100
+						string = ''.join(e for e in y if e.isalnum())
+						string = ''.join([i for i in string if not i.isdigit()])
+						similarity = SequenceMatcher(a=x.strip(),b=string.strip()).ratio() * 100
 						print similarity
-						if similarity > 99 and flag:
-							match_location = Event_tweet_data.objects.get(event_location=y.strip())
+						if similarity > 75 and flag or x in string:
+							match_location = Event_tweet_data.objects.get(event_location=x)
 							match_location.event_count += 1
 							match_location.save() 
 							flag= False
@@ -67,3 +70,21 @@ def graphs(request):
 						tweet_object.event_count = 1
 						tweet_object.save()
 	return HttpResponse(location_list)
+
+def generate_graph(request):
+	chunk = []
+	total_list = []
+	render_data = {}
+	location_objects = Event_tweet_data.objects().values_list('event_location')
+	count_objects = Event_tweet_data.objects().values_list('event_count')
+	for item in range(len(location_objects)):
+		chunk = []
+		chunk.append(str(location_objects[item]))
+		print str(location_objects[item])
+		chunk.append(count_objects[item])
+		total_list.append(chunk)
+	render_data['graph_data'] = json.dumps(total_list)
+	render_data['reach'] = 'Reach in Numbers'
+	render_data['topic'] = 'Twitter Data analysis for Gulmeher kaur'
+
+	return render(request,'graphs.html', render_data)

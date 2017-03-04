@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+			<title> analysis graph </title>
+	</head>
+	<body>
+
+		<div id="container" style="mn-width: 300px; height: 400px; margin: 0 auto">
+		</div>
+
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script type="text/javascript">
+			Highcharts.chart('container', {
+					    chart: {
+					        type: 'column'
+					    },
+					    title: {
+					        text: '{{topic}}'
+					    },
+					    subtitle: {
+					        text: 'Source: Twitter'
+					    },
+					    xAxis: {
+					        type: 'category',
+					        labels: {
+					            rotation: -45,
+					            style: {
+					                fontSize: '13px',
+					                fontFamily: 'Verdana, sans-serif'
+					            }
+					        }
+					    },
+					    yAxis: {
+					        min: 0,
+					        title: {
+					            text: '{{reach}}'
+					        }
+					    },
+					    legend: {
+					        enabled: false
+					    },
+					    tooltip: {
+					        pointFormat: 'User Count <b>{point.y:.1f} </b>'
+					    },
+					    series: [{
+					        name: '{{reach}}',
+					        data:{{graph_data|safe}},
+					        dataLabels: {
+					            enabled: true,
+					            rotation: -90,
+					            color: '#FFFFFF',
+					            align: 'right',
+					            format: '{point.y:.1f}', // one decimal
+					            y: 10, // 10 pixels down from the top
+					            style: {
+					                fontSize: '13px',
+					                fontFamily: 'Verdana, sans-serif'
+					            }
+					        }
+					    }]
+					});
+
+
+		</script>
+	</body>
+</html>

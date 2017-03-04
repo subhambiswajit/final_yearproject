@@ -1,0 +1,29 @@
+mongodb://accountAdmin01:changeMe@127.0.0.1/test
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 04, 2017 - 21:37:59
+Django version 1.7, using settings 'testmongo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+Mumbai
+India
+Stage
+Delhi
+Ghazipur
+Ahmedabad
+Bombay
+Chandigarh
+Bengaluru
+Fujairah
+Farrukhabad
+UttarPradesh
+Gurgaon
+hyderabad
+telangana
+Pune
+Davanagerekarnataka
+Chennai
+TamilNadu
+Maldives
+mongodb://accountAdmin01:changeMe@127.0.0.1/test
