@@ -12,3 +12,6 @@ class Poll(Document):
     pub_date = DateTimeField(help_text='date published')
     choices = ListField(EmbeddedDocumentField(Choice))
 
+class Event_tweet_data(Document):
+    event_location = StringField(max_length=200)
+    event_count = IntField(default=0)
