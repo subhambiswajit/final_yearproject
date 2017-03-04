@@ -36,11 +36,12 @@ def graphs(request):
 			for x in location_list_array:
 				location_list.append(x)
 			if len(found_locations) == 0:
-				print 'found location is none'
-				tweet_object = Event_tweet_data()
-				tweet_object.event_location = tweets_data[total]['user']['location']
-				tweet_object.event_count = 0
-				tweet_object.save()
+				if item in location_list_array:
+					print 'found location is none'
+					tweet_object = Event_tweet_data()
+					tweet_object.event_location = item
+					tweet_object.event_count = 0
+					tweet_object.save()
 			for x in found_locations:
 				flag = True
 				for y in location_list_array:
