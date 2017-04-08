@@ -10,6 +10,7 @@ import datetime
 import json
 from difflib import SequenceMatcher
 from django.db.models import Q
+import httplib, urllib
 # Create your views here.
 
 
@@ -18,7 +19,7 @@ def home(request):
 
 
 def graphs(request):
-	tweets_data_path = 'tweepy/anusha.txt'
+	tweets_data_path = 'data.txt'
 	tweets_data = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -85,6 +86,32 @@ def generate_graph(request):
 		total_list.append(chunk)
 	render_data['graph_data'] = json.dumps(total_list)
 	render_data['reach'] = 'Reach in Numbers'
-	render_data['topic'] = 'Twitter Data analysis for Gulmeher kaur'
+	render_data['topic'] = 'Twitter Data analysis for Womens Day'
 
 	return render(request,'graphs.html', render_data)
+
+def geocoding(request):
+	tweets_data_path = 'data.txt'
+	tweets = []
+	location_list = []
+	tweets_file = open(tweets_data_path, "r")
+	for line in tweets_file:
+	    try:
+	        tweets.append(json.loads(line))
+	    except:
+	        continue
+	print len(tweets)
+	for total in range(len(tweets_data)):
+		if tweets[total]['user']['location']:
+			address = tweets[total]['user']['location']
+			params = urllib.urlencode({'address': address, 'key': AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ})
+		    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json"}
+			conn = httplib.HTTPConnection("/maps.googleapis.com:80")
+			conn.request("POST", "/maps/api/geocode/json", params, headers)
+			response = conn.getresponse()
+			print response.status, response.reason
+			responseData = response.read()
+			latitude = responseData[0]['results']['geometry']['location']['lat']
+			longitude = responseData[0]['results']['geometry']['location']['lng']
+			conn.close()
+	return HttpResponse(location_list)
