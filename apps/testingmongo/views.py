@@ -10,33 +10,16 @@ import datetime
 import json
 from difflib import SequenceMatcher
 from django.db.models import Q
-<<<<<<< HEAD
-
-import httplib, urllib
-import socket
-
-import numpy as np
-
-from sklearn.cluster import DBSCAN
-from sklearn import metrics
-from sklearn.datasets.samples_generator import make_blobs
-from sklearn.preprocessing import StandardScaler
-=======
 import httplib, urllib2
->>>>>>> a22a29b16d6ed4eaae34cde385415f90d8417861
 # Create your views here.
 
 import ssl
 def home(request):
 	return render (request,'index.html')
 
-
 def graphs(request):
-<<<<<<< HEAD
-=======
 	tweets_data_path = 'tweepy/womensday.txt'
 	tweets_data_path = 'data.txt'
->>>>>>> a22a29b16d6ed4eaae34cde385415f90d8417861
 	tweets_data = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -126,14 +109,17 @@ def geocoding(request):
 	        continue
 	print len(tweets)
 	for total in range(len(tweets)):
-		if tweets[total]['user']['location']:
-			address = tweets[total]['user']['location']
-			address = address.strip()
-			address = address.replace(" ", "+")
-			url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
-			context = ssl._create_unverified_context()
-			data = urllib2.urlopen(url, context=context).read()
-			data = json.loads(data)
-			print data
-			result.append(data)
+		try:
+			if tweets[total]['user']['location']:
+				address = tweets[total]['user']['location']
+				address = address.strip()
+				address = address.replace(" ", "+")
+				url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
+				context = ssl._create_unverified_context()
+				data = urllib2.urlopen(url, context=context).read()
+				data = json.loads(data)
+				print data['results'][0]['geometry']['location']
+				result.append(data['results'][0]['geometry']['location'])
+		except Exception:
+			continue
 	return HttpResponse(result)
