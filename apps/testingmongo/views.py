@@ -20,7 +20,11 @@ def home(request):
 
 
 def graphs(request):
+<<<<<<< HEAD
+	tweets_data_path = 'tweepy/womensday.txt'
+=======
 	tweets_data_path = 'data.txt'
+>>>>>>> 84a4e85c3b154b705a5227eea78621dc258cc6b1
 	tweets_data = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -45,32 +49,35 @@ def graphs(request):
 					string = ''.join(e for e in item if e.isalnum())
 					string = ''.join([i for i in string if not i.isdigit()])
 					tweet_object.event_location = string.strip()
-					tweet_object.event_count = 0
+					tweet_object.event_count = 1
 					tweet_object.save()
 			else:
 				for y in location_list_array:
-					found_locations = Event_tweet_data.objects.values_list("event_location")
-					flag = True
-					for x in found_locations:
-						print 'X'+ x
-						print 'Y'+ y
-						string = ''.join(e for e in y if e.isalnum())
-						string = ''.join([i for i in string if not i.isdigit()])
-						similarity = SequenceMatcher(a=x.strip(),b=string.strip()).ratio() * 100
-						print similarity
-						if similarity > 75 and flag or x in string:
-							match_location = Event_tweet_data.objects.get(event_location=x)
-							match_location.event_count += 1
-							match_location.save() 
-							flag= False
-							break
-					if flag:
-						tweet_object = Event_tweet_data()
-						string = ''.join(e for e in y if e.isalnum())
-						string = ''.join([i for i in string if not i.isdigit()])
-						tweet_object.event_location = string.strip()
-						tweet_object.event_count = 1
-						tweet_object.save()
+					try:
+						found_locations = Event_tweet_data.objects.values_list("event_location")
+						flag = True
+						for x in found_locations:
+							print 'X'+ x
+							print 'Y'+ y
+							string = ''.join(e for e in y if e.isalnum())
+							string = ''.join([i for i in string if not i.isdigit()])
+							similarity = SequenceMatcher(a=x.strip(),b=string.strip()).ratio() * 100
+							print similarity
+							if similarity > 75 and flag or x in string:
+								match_location = Event_tweet_data.objects.get(event_location=x)
+								match_location.event_count += 1
+								match_location.save() 
+								flag= False
+								break
+						if flag:
+							tweet_object = Event_tweet_data()
+							string = ''.join(e for e in y if e.isalnum())
+							string = ''.join([i for i in string if not i.isdigit()])
+							tweet_object.event_location = string.strip()
+							tweet_object.event_count = 1
+							tweet_object.save()
+					except Exception:
+						continue
 	return HttpResponse(location_list)
 
 def generate_graph(request):
@@ -80,15 +87,18 @@ def generate_graph(request):
 	location_objects = Event_tweet_data.objects().values_list('event_location')
 	count_objects = Event_tweet_data.objects().values_list('event_count')
 	for item in range(len(location_objects)):
-		chunk = []
-		chunk.append(str(location_objects[item]))
-		print str(location_objects[item])
-		chunk.append(count_objects[item])
-		total_list.append(chunk)
+		try:
+			chunk = []
+			chunk.append(str(location_objects[item]))
+			print str(location_objects[item])
+			chunk.append(count_objects[item])
+			total_list.append(chunk)
+		except Exception:
+			continue
 	render_data['graph_data'] = json.dumps(total_list)
 	render_data['reach'] = 'Reach in Numbers'
+	render_data['topic'] = "Twitter Data analysis for Womens Day"
 	render_data['topic'] = 'Twitter Data analysis for Womens Day'
-
 	return render(request,'graphs.html', render_data)
 
 def geocoding(request):
