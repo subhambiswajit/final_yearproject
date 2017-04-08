@@ -10,8 +10,16 @@ import datetime
 import json
 from difflib import SequenceMatcher
 from django.db.models import Q
+
 import httplib, urllib
 import socket
+
+import numpy as np
+
+from sklearn.cluster import DBSCAN
+from sklearn import metrics
+from sklearn.datasets.samples_generator import make_blobs
+from sklearn.preprocessing import StandardScaler
 # Create your views here.
 
 
@@ -20,11 +28,6 @@ def home(request):
 
 
 def graphs(request):
-<<<<<<< HEAD
-	tweets_data_path = 'tweepy/womensday.txt'
-=======
-	tweets_data_path = 'data.txt'
->>>>>>> 84a4e85c3b154b705a5227eea78621dc258cc6b1
 	tweets_data = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -116,7 +119,8 @@ def geocoding(request):
 		if tweets[total]['user']['location']:
 			address = tweets[total]['user']['location']
 			print address;
-			params = urllib.urlencode({'address': 'India', 'key': 'AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'})
+			context = ssl._create_unverified_context()
+			params = urllib.urlencode({'address': 'India', 'key': 'AIzaSyAGV5DKipYLjkpmwyGTBIwGDGiNmP9SUEM'}, context = context)
 			headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json"}
 			conn = httplib.HTTPSConnection("maps.googleapis.com", 43)
 			conn.request("POST", "/maps/api/geocode/json", params, headers)
