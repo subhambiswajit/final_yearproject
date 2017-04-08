@@ -11,6 +11,7 @@ import json
 from difflib import SequenceMatcher
 from django.db.models import Q
 import httplib, urllib
+import socket
 # Create your views here.
 
 
@@ -101,17 +102,18 @@ def geocoding(request):
 	    except:
 	        continue
 	print len(tweets)
-	for total in range(len(tweets_data)):
+	for total in range(len(tweets)):
 		if tweets[total]['user']['location']:
 			address = tweets[total]['user']['location']
-			params = urllib.urlencode({'address': address, 'key': AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ})
-		    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json"}
-			conn = httplib.HTTPConnection("/maps.googleapis.com:80")
+			print address;
+			params = urllib.urlencode({'address': 'India', 'key': 'AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'})
+			headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json"}
+			conn = httplib.HTTPSConnection("maps.googleapis.com", 43)
 			conn.request("POST", "/maps/api/geocode/json", params, headers)
 			response = conn.getresponse()
 			print response.status, response.reason
-			responseData = response.read()
+			responseData = json.loads(response.read())
 			latitude = responseData[0]['results']['geometry']['location']['lat']
 			longitude = responseData[0]['results']['geometry']['location']['lng']
 			conn.close()
-	return HttpResponse(location_list)
+	return HttpResponse(responseData)
