@@ -98,6 +98,7 @@ def generate_graph(request):
 	return render(request,'graphs.html', render_data)
 
 def geocoding(request):
+	result = []
 	tweets_data_path = 'something.txt'
 	tweets = []
 	location_list = []
@@ -111,8 +112,12 @@ def geocoding(request):
 	for total in range(len(tweets)):
 		if tweets[total]['user']['location']:
 			address = tweets[total]['user']['location']
+			address = address.strip()
+			address = address.replace(" ", "+")
 			url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
 			context = ssl._create_unverified_context()
-			data = urllib2.urlopen(url, context=context)
+			data = urllib2.urlopen(url, context=context).read()
+			data = json.loads(data)
 			print data
-	return HttpResponse(data)
+			result.append(data)
+	return HttpResponse(result)
