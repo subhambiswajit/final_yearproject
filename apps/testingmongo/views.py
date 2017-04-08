@@ -13,7 +13,7 @@ from django.db.models import Q
 import httplib, urllib2
 # Create your views here.
 
-
+import ssl
 def home(request):
 	return render (request,'index.html')
 
@@ -111,10 +111,8 @@ def geocoding(request):
 	for total in range(len(tweets)):
 		if tweets[total]['user']['location']:
 			address = tweets[total]['user']['location']
-			url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+"&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ"
-			data = urllib2.urlopen(url).read
+			url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
+			context = ssl._create_unverified_context()
+			data = urllib2.urlopen(url, context=context)
 			print data
-			latitude = responseData[0]['results']['geometry']['location']['lat']
-			longitude = responseData[0]['results']['geometry']['location']['lng']
-			conn.close()
-	return HttpResponse(location_list)
+	return HttpResponse(data)
