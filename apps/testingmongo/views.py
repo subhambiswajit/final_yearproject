@@ -10,6 +10,7 @@ import datetime
 import json
 from difflib import SequenceMatcher
 from django.db.models import Q
+<<<<<<< HEAD
 
 import httplib, urllib
 import socket
@@ -20,14 +21,22 @@ from sklearn.cluster import DBSCAN
 from sklearn import metrics
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.preprocessing import StandardScaler
+=======
+import httplib, urllib2
+>>>>>>> a22a29b16d6ed4eaae34cde385415f90d8417861
 # Create your views here.
 
-
+import ssl
 def home(request):
 	return render (request,'index.html')
 
 
 def graphs(request):
+<<<<<<< HEAD
+=======
+	tweets_data_path = 'tweepy/womensday.txt'
+	tweets_data_path = 'data.txt'
+>>>>>>> a22a29b16d6ed4eaae34cde385415f90d8417861
 	tweets_data = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -105,7 +114,7 @@ def generate_graph(request):
 	return render(request,'graphs.html', render_data)
 
 def geocoding(request):
-	tweets_data_path = 'data.txt'
+	tweets_data_path = 'something.txt'
 	tweets = []
 	location_list = []
 	tweets_file = open(tweets_data_path, "r")
@@ -118,16 +127,9 @@ def geocoding(request):
 	for total in range(len(tweets)):
 		if tweets[total]['user']['location']:
 			address = tweets[total]['user']['location']
-			print address;
+			url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
 			context = ssl._create_unverified_context()
-			params = urllib.urlencode({'address': 'India', 'key': 'AIzaSyAGV5DKipYLjkpmwyGTBIwGDGiNmP9SUEM'}, context = context)
-			headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json"}
-			conn = httplib.HTTPSConnection("maps.googleapis.com", 43)
-			conn.request("POST", "/maps/api/geocode/json", params, headers)
-			response = conn.getresponse()
-			print response.status, response.reason
-			responseData = json.loads(response.read())
-			latitude = responseData[0]['results']['geometry']['location']['lat']
-			longitude = responseData[0]['results']['geometry']['location']['lng']
-			conn.close()
-	return HttpResponse(responseData)
+			data = urllib2.urlopen(url, context=context)
+			print data
+	return HttpResponse(data)
+>>>>>>> a22a29b16d6ed4eaae34cde385415f90d8417861
