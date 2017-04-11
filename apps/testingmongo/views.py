@@ -97,21 +97,14 @@ def generate_graph(request):
 	return render(request,'graphs.html', render_data)
 
 def geocoding(request):
-	result = []
-	tweets_data_path = 'something.txt'
-	tweets = []
-	location_list = []
-	tweets_file = open(tweets_data_path, "r")
-	for line in tweets_file:
-	    try:
-	        tweets.append(json.loads(line))
-	    except:
-	        continue
-	print len(tweets)
-	for total in range(len(tweets)):
+	render_data = {}
+	location_latlong = []
+	location_objects = Event_tweet_data.objects().distinct('event_location')
+	for total in range(len(location_objects)):
 		try:
-			if tweets[total]['user']['location']:
-				address = tweets[total]['user']['location']
+			if location_objects[total]:
+				result = {}
+				address = location_objects[total]
 				address = address.strip()
 				address = address.replace(" ", "+")
 				url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+address+'&key=AIzaSyCz3r0CzBrK3xKrBvfPgHQCJcX51GzJSYQ'
@@ -119,7 +112,10 @@ def geocoding(request):
 				data = urllib2.urlopen(url, context=context).read()
 				data = json.loads(data)
 				print data['results'][0]['geometry']['location']
-				result.append(data['results'][0]['geometry']['location'])
+				result['lat'] = data['results'][0]['geometry']['location']['lat']
+				result['lng'] = data['results'][0]['geometry']['location']['lng']
+				location_latlong.append(result)
 		except Exception:
 			continue
-	return HttpResponse(result)
+	render_data['geodata'] = location_latlong
+	return render(request,'geomap.html',render_data)
